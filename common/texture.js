@@ -42,6 +42,40 @@ class Texture {
     }
 }
 
+class CubeMaps{
+
+    constructor(pathCubemap = [],gl) {
+        if(pathCubemap.length !== 6){
+            console.log("Not enough paths to build a cubemap")
+        }
+        this.cubemapBuffer = gl.createTexture()
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP,this.cubemapBuffer)
+        pathCubemap.forEach((path,index) =>{
+            this.loadFace(path,gl.TEXTURE_CUBE_MAP_POSITIVE_X + index,gl)
+        })
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    }
+
+    loadFace(faceId, type,gl) {
+        let img = new Image();
+        img.src = faceId;
+        img.addEventListener('load',function(){
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubemapBuffer);
+            gl.texImage2D(type, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+            console.log(img.src)
+            //gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+        }.bind(this));
+    }
+    bindCubemap(shader){
+        let gl = shader.gl
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP,this.cubemapBuffer)
+    }
+}
+
 class Material{
     static counter = 0
     constructor(albedoTexture = null,normalMap = null) {

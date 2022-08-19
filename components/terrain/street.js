@@ -110,7 +110,7 @@ function buildStreet(){
 }
 function testShaderSetup(c){
     let gl = c.gl
-    input = new Input()
+    let input = new Input()
     let simpleShader = c.spawnShader(street_vs,street_fs,"StreetShader")
     let camera = new Camera([0,1,5])
     simpleShader.useProgram()
