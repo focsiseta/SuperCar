@@ -53,8 +53,8 @@ const lightpass_fs = `
     void main(){
        vec3 color = vec3(texture2D(uAlbedo,oTex));
        vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
-       vec3 finalNormal = vNormal + sampledNormal; 
+       vec3 finalNormal = sampledNormal; 
        gl_FragColor = dirlight(dirLights[0],oTex,finalNormal,uAlbedo,uCameraPos, vPos);
-       //gl_FragColor = vec4(1.0,0.0,1.0,1.0);
+       //gl_FragColor = vec4(finalNormal,1.0);
     }
 `

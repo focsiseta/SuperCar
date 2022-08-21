@@ -3,15 +3,18 @@ function lightpassSetup(c){
     var gl = c.gl
     gl.enable(gl.DEPTH_TEST)
     gl.clearColor(0,0,0,0.8)
+    /*
     tea = new Element("tea",teapot.vertices[0].values,"TRIANGLES",teapot.vertices[1].values,teapot.connectivity[0].indices,generateTexCoords(teapot.vertices[0].values.length))
     cassa = new Element("cassa",crateWTexture.vertices[0].values,"TRIANGLES",crateWTexture.vertices[1].values,crateWTexture.connectivity[0].indices,crateWTexture.vertices[3].values)
     circle = new Element("sfera",sphere.vertices[0].values,"TRIANGLES",
         sphere.vertices[1].values,sphere.connectivity[0].indices,generateTexCoords(sphere.vertices[0].values.length))
-    var dir = new DirectionalLight(0.3,[0.4,0.4,0.4],[0,0,-1])
+
+     */
+    var dir = new DirectionalLight(0.3,[1,0.7,0],[-1,-1,-1])
     var point = new Pointlight(0.2,[1,1,1],[0,5,0],0.22,0.0019)
-    var sourceTest = new ShaderSource(lightpass_fs)
-    camera = new Camera([0,0,3])
-    let noLight = c.spawnShader(lightpass_vs,sourceTest.source,"noLight")
+    var source = new ShaderSource(lightpass_fs)
+    let camera = new Camera([0,1,0])
+    let noLight = c.spawnShader(lightpass_vs,source.source,"noLight")
     noLight.useProgram()
     dir.bindStructUniform(noLight)
     point.bindStructUniform(noLight)

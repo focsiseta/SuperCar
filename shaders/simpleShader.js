@@ -16,7 +16,8 @@ const street_vs = `
     void main(){
         vPos = vec3(uM * vec4(aPos,1.0));
         vTex = aTex;
-        gl_Position = uProjMatrix * uViewMatrix * vec4(vPos,1.0);
+        vec4 pos = uProjMatrix * uViewMatrix * vec4(vPos,1.0);
+        gl_Position = pos.xyww;
     }
 `
 
