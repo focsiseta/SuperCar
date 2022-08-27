@@ -9,7 +9,7 @@ function vec3add( v3,i,rs){
     v3[i*3+2] += rs[2];
 }
 function gradToRad(number){
-    return number *  Math.PI/200
+    return number *  Math.PI/180
 }
 function vec3eq( v3,i,rs){
     v3 [i*3] 	  = rs [0];

@@ -141,6 +141,8 @@ const crateWTexture = {
     "custom" : null
 }
 
+
+
 const skyboxVertices = [
     -1.0,  1.0, -1.0,
     -1.0, -1.0, -1.0,

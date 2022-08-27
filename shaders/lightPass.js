@@ -6,11 +6,13 @@ const lightpass_vs = `
     
     uniform mat4 uProj;
     uniform mat4 uViewMatrix;
+    uniform mat4 uIViewMatrix;
     uniform mat4 uM;
     varying vec2 oTex;
     varying vec3 vPos;
     varying vec3 vNormal;
     varying mat3 vTBN;
+
     
      mat3 transpose(mat3 inMatrix) {
         highp vec3 i0 = inMatrix[0];
@@ -40,21 +42,22 @@ const lightpass_vs = `
 const lightpass_fs = `
 
     precision highp float;
-    #include(pointlight)
     #include(dirlight)
+    #include(dirShadow)
     varying vec3 vPos;
     varying vec3 vNormal;
     varying vec2 oTex;
     varying mat3 vTBN;
-    uniform vec3 uCameraPos;
+    varying vec3 viewPos;
+    uniform vec3 uView;
     uniform sampler2D uAlbedo;
     uniform sampler2D uNormal;
     
     void main(){
-       vec3 color = vec3(texture2D(uAlbedo,oTex));
+       vec4 color = texture2D(uAlbedo,oTex);
        vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
-       vec3 finalNormal = sampledNormal; 
-       gl_FragColor = dirlight(dirLights[0],oTex,finalNormal,uAlbedo,uCameraPos, vPos);
+       vec3 finalNormal = (((sampledNormal.x) <= 0.0) || ((sampledNormal.y) <= 0.0) || ((sampledNormal.z) == 0.0)) ? vNormal : sampledNormal; 
+       gl_FragColor = dirlight(dirLights[0],color,finalNormal,uView, vPos);
        //gl_FragColor = vec4(finalNormal,1.0);
     }
 `

@@ -35,8 +35,7 @@ class DirectionalLight extends Transformations{
                 vec3 dir;
             };
             uniform DirLight dirLights[DIRLIGHT];
-        vec4 dirlight(DirLight light,vec2 texCoords,vec3 normal,sampler2D albedo,vec3 cameraPos,vec3 fragPos){
-            vec4 color = texture2D(albedo,texCoords);
+        vec4 dirlight(DirLight light,vec4 color ,vec3 normal,vec3 cameraPos,vec3 fragPos){
             vec3 N = normalize(normal);
             vec3 lightDir = normalize(-light.dir);
             vec3 viewDirection = normalize(cameraPos - fragPos);
@@ -47,7 +46,7 @@ class DirectionalLight extends Transformations{
             vec4 diffuse = color * diff;
             
             vec3 halfway = normalize(lightDir + viewDirection);
-            float spec = pow(max(dot(halfway,N),0.0),1.0);
+            float spec = pow(max(dot(halfway,N),0.0),64.0);
                 
             vec4 specular = spec * vec4(light.color,1.0) * diffuse;
                 
@@ -154,13 +153,11 @@ class Pointlight extends Transformations{
                 vec3 pos;
             };
             uniform Pointlight pointLights[POINTLIGHT];
-        vec4 pointlightChangeSpace(Pointlight light,vec2 texCoords,vec3 normal,sampler2D albedo,vec3 cameraPos,vec3 fragPos,mat3 space){
+        vec4 pointlightChangeSpace(Pointlight light,vec4 color,vec3 normal,vec3 cameraPos,vec3 fragPos,mat3 space){
             vec3 distanceV = light.pos - fragPos;
             vec3 rayDir = space * normalize(distanceV);
             float dist = length(distanceV);
             float attenuation = 1.0 /(KC + light.kl * dist + light.kq * (dist * dist));
-            
-            vec4 color = texture2D(albedo,texCoords);
             vec3 N = normalize(normal);
             vec3 viewDirection =  space * normalize(cameraPos - fragPos);
             vec4 ambient = vec4(color.rgb * light.ambInt,1.0);
@@ -177,7 +174,7 @@ class Pointlight extends Transformations{
             vec4 finalColor = specular + diffuse + ambient;
             return vec4(finalColor.rgb * attenuation ,1.0);
         }
-        vec4 pointlight(Pointlight light,vec2 texCoords,vec3 normal,sampler2D albedo,vec3 cameraPos,vec3 fragPos){
+        vec4 pointlight(Pointlight light,vec4 color,vec3 normal,vec3 cameraPos,vec3 fragPos){
             vec3 distanceV = light.pos - fragPos;
             vec3 rayDir = normalize(distanceV);
             float dist = length(distanceV);

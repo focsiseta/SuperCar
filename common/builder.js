@@ -8,7 +8,8 @@ class ShaderSource{
         `#include(pointlight)`,
         `#include(spotlight)`,
         `#include(structpl)`,
-        `#include(structdl)`
+        `#include(structdl)`,
+        `#include(dirShadow)`
     ]
 
     constructor(source = null) {
@@ -26,6 +27,9 @@ class ShaderSource{
             }
             if(this.source.includes(ShaderSource.libList[5])){
                 this.source = this.source.replace(ShaderSource.libList[5],Pointlight.includePointlight())
+            }
+            if(this.source.includes(ShaderSource.libList[6])){
+                this.source = this.source.replace(ShaderSource.libList[6],shIncludes[ShaderSource.libList[6]])
             }
         }
     }

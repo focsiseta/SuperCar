@@ -28,8 +28,6 @@ class Transformations {
         this.frame = glMatrix.mat4.create()
         this.inverseTransposeMatrix = glMatrix.mat4.create()
         this.transformationMatrix = glMatrix.mat4.create()
-
-
         //Father frame
         this.fMatrix = glMatrix.mat4.create()
 
@@ -174,4 +172,30 @@ class Transformations {
     }
 
 
+}
+
+class QuatOp{
+    static rotateQuad(rotQuat,vectorQuat,rad = 1){
+        let rot = glMatrix.quat.setAxisAngle(glMatrix.quat.create(),rotQuat,rad)
+        glMatrix.quat.normalize(rot,rot)
+        let rotConj = glMatrix.quat.conjugate(glMatrix.quat.create(),rot)
+        let result = glMatrix.quat.multiply([],vectorQuat,rotConj)
+        glMatrix.quat.multiply(result,rot,vectorQuat)
+        glMatrix.quat.normalize(vectorQuat,result)
+        return [result[0],result[1],result[2]]
+    }
+    static rotateVectorWithQuad(vector,quat,rad = 1){
+        quat = glMatrix.quat.normalize(quat,quat)
+        let rotation = glMatrix.quat.setAxisAngle([],quat,rad)
+        //let mat = glMatrix.mat3.fromQuat([],rotation)
+        rotation = glMatrix.quat.normalize(rotation,rotation)
+        quat = glMatrix.quat.fromValues(rotation[0],rotation[1],rotation[2],0)
+        return glMatrix.vec3.transformQuat([],vector,rotation)
+    }
+    static rotationAroundAxis(axis,rad){
+        return glMatrix.quat.setAxisAngle([],axis,rad)
+    }
+    static mat3FromQuat(quat){
+        return glMatrix.mat3.fromQuat([],quat)
+    }
 }

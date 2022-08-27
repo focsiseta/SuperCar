@@ -91,6 +91,22 @@ class Drawable extends Transformations{
         this.hasMaterial = material != null
         this.material = material
     }
+    chaseCamera(position = [0,4,0]){
+        let camera = new Camera(position)
+        camera.setFatherFrame(this.frame)
+        let objMatrix = this.frame
+        let pos = [objMatrix[12],objMatrix[13],objMatrix[14]]
+        let direction = glMatrix.vec3.create()
+        glMatrix.vec3.subtract(direction,pos,camera.getCameraPosition())
+        //camera.transformationMatrix[8] = direction[0]
+        //camera.transformationMatrix[9] = direction[1]
+        //camera.transformationMatrix[10] = direction[2]
+        let matrix = camera.getViewMatrix()
+        matrix[2] = direction[0]
+        matrix[6] = direction[1]
+        matrix[10] = direction[2]
+        return matrix
+    }
 
 
 }
