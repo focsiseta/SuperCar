@@ -1,9 +1,9 @@
-function shadowShaderSetup(lightPosition,scale = 1,c){
-    let scaledPosition = glMatrix.vec3.scale([],lightPosition,-scale)
-    let ortoProjMatrix = glMatrix.mat4.ortho([],10,-10,-10,10,0.15,1000)
-    let viewMatrixLight = glMatrix.mat4.lookAt([],scaledPosition,[0,0,0],[0,1,0])
-    let lightCoordsMatrix = glMatrix.mat4.multiply([],ortoProjMatrix,viewMatrixLight)
-    let sShader = c.spawnShader(shadow_vs,shadow_fs,"shadowShader")
+function shadowShaderSetup(lightPosition,scale = 1,w,h,c){
+    let scaledPosition = glMatrix.vec3.scale(glMatrix.vec3.create(),lightPosition,-scale)
+    let ortoProjMatrix = glMatrix.mat4.ortho(glMatrix.mat4.create(),-w/8,w/8,-h/8,h/8,-300,300)
+    let viewMatrixLight = glMatrix.mat4.lookAt(glMatrix.mat4.create(),scaledPosition,[0,0,0],[0,1,0])
+    let lightCoordsMatrix = glMatrix.mat4.multiply(glMatrix.mat4.create(),ortoProjMatrix,viewMatrixLight)
+   let sShader = c.spawnShader(shadow_vs,shadow_fs,"shadowShader")
     sShader.setEnableAttrFunc((shader) =>{
         let gl = shader.gl
         gl.enableVertexAttribArray(shader["aPos"])
@@ -19,10 +19,12 @@ function shadowShaderSetup(lightPosition,scale = 1,c){
     sShader.setDrawFunction((shader,drawable) =>{
         let gl = shader.gl
         let shape = drawable.shape
-        shader.setMatrixUniform("uM",drawable.shape.getFrame())
-        gl.drawElements(gl[shape.drawType],shape.indices.length / 3,gl.UNSIGNED_SHORT,0)
+        shader.setMatrixUniform("uM",drawable.getFrame())
+        gl.drawElements(gl[shape.drawType],shape.indices.length,gl.UNSIGNED_SHORT,0)
 
     })
+    sShader.useProgram()
+    sShader.setMatrixUniform("uLightMatrix",lightCoordsMatrix,false)
     sShader.lightCoordsMatrix = lightCoordsMatrix
     return sShader
 }

@@ -174,6 +174,7 @@ class QuadCamera {
         this.right = glMatrix.vec3.cross([], this.front, this.up)
         this.frontQuat = glMatrix.quat.fromValues(0, 0, -1, 0)
         this.rightQuat = glMatrix.quat.fromValues(...this.right, 0)
+        this.viewMatrix = glMatrix.mat4.create()
         this.speed = speed
     }
 
@@ -197,12 +198,16 @@ class QuadCamera {
     }
 
      */
+    getPosition(){
+        let viewMatrix = glMatrix.mat4.invert([],this.viewMatrix)
+        return [viewMatrix[12],viewMatrix[13],viewMatrix[14]]
+    }
     getViewMatrix() {
         let center = [
             this.position[0] + this.front[0],
             this.position[1] + this.front[1],
             this.position[2] + this.front[2]]
-        return glMatrix.mat4.lookAt(glMatrix.mat4.create(), this.position, center, this.up)
+        return glMatrix.mat4.lookAt(this.viewMatrix, this.position, center, this.up)
     }
 
     processInput(handler) {

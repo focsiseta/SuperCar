@@ -2,7 +2,18 @@ class Context {
     constructor(canvasID = "OUT",typeOfContext = "webgl2") {
         var canvas = document.getElementById(canvasID)
         this.gl = WebGLDebugUtils.makeDebugContext(canvas.getContext(typeOfContext))
-        this.gl.getExtension('OES_standard_derivatives')
+        //this.gl = canvas.getContext(typeOfContext)
+        //this.gl.getExtension('OES_standard_derivatives')
+        /*
+        this.gl.getExtension('OES_standard_derivatives');
+        this.gl.getExtension('EXT_shader_texture_lod');
+        this.gl.getExtension("EXT_frag_depth")
+
+         */
+        this.gl.getExtension('WEBGL_depth_texture')
+        this.gl.getExtension('WEBGL_draw_buffers')
+
+
     }
     loadElement(element = null){
         if(element == null){

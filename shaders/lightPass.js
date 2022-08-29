@@ -6,11 +6,12 @@ const lightpass_vs = `
     
     uniform mat4 uProj;
     uniform mat4 uViewMatrix;
-    uniform mat4 uIViewMatrix;
+    uniform mat4 uLightMatrix;
     uniform mat4 uM;
     varying vec2 oTex;
     varying vec3 vPos;
     varying vec3 vNormal;
+    varying vec4 vLightFragPos;
     varying mat3 vTBN;
 
     
@@ -35,7 +36,9 @@ const lightpass_vs = `
         vec3 T = normalize(vec3(uM * vec4(aTangent,0.0)));
         vec3 B = normalize(cross(T,vNormal));
         vTBN = mat3(T,B,vNormal); 
+        vLightFragPos = uLightMatrix * uM * vec4(aPosition,1.0);
         gl_Position = uProj * uViewMatrix * uM * vec4(aPosition,1.0);
+    
     }
 
 `
@@ -49,15 +52,19 @@ const lightpass_fs = `
     varying vec2 oTex;
     varying mat3 vTBN;
     varying vec3 viewPos;
+    varying vec4 vLightFragPos;
     uniform vec3 uView;
     uniform sampler2D uAlbedo;
     uniform sampler2D uNormal;
+    uniform sampler2D uShadow;
+    
     
     void main(){
        vec4 color = texture2D(uAlbedo,oTex);
+       float isShadow = shadowSampling(vLightFragPos,uShadow);
        vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
-       vec3 finalNormal = (((sampledNormal.x) <= 0.0) || ((sampledNormal.y) <= 0.0) || ((sampledNormal.z) == 0.0)) ? vNormal : sampledNormal; 
-       gl_FragColor = dirlight(dirLights[0],color,finalNormal,uView, vPos);
+       vec3 finalNormal = sampledNormal;//(((sampledNormal.x) <= 0.0) || ((sampledNormal.y) <= 0.0) || ((sampledNormal.z) == 0.0)) ? vNormal : sampledNormal; 
+       gl_FragColor = shadowPass(dirLights[0],color,finalNormal,uView, vPos,isShadow);
        //gl_FragColor = vec4(finalNormal,1.0);
     }
 `

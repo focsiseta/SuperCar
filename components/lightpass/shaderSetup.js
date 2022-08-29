@@ -1,6 +1,6 @@
 function lightpassSetup(c){
     handler = new Input()
-    dir = new DirectionalLight(0.1,[1,0.7,0],[0,-1,1])
+    dir = new DirectionalLight(0.1,[1,0.7,0],[1,-1,0])
     var point = new Pointlight(0.2,[1,1,1],[0,5,0],0.22,0.0019)
     var source = new ShaderSource(lightpass_fs)
     let noLight = c.spawnShader(lightpass_vs,source.source,"noLight")
@@ -11,6 +11,7 @@ function lightpassSetup(c){
     dir.loadLight(noLight)
     noLight.setUniform1Int("uAlbedo",0)
     noLight.setUniform1Int("uNormal",1)
+    noLight.setUniform1Int("uShadow",2)
     noLight.setEnableAttrFunc((shader) =>{
         var gl = shader.gl
         gl.enableVertexAttribArray(shader["aPosition"])
