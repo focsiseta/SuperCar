@@ -10,17 +10,6 @@ const shadow_vs =
     
     }
 `
-const shadow_fss =
-    `
-precision highp float;					
-
-
-void main(void)									
-{	
-    //gl_FragColor = vec4(gl_FragCoord.z, planeApprox(gl_FragCoord.z),0.0,1.0);
-    //gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
-}`
-
 const shadow_fs =
     `#version 300 es
 precision highp float;
@@ -36,6 +25,8 @@ float planeApprox(float depth)
 
 void main(void)
 {
+    // = gl.FragCoord.z * -1.0;
+     //gl_FragDepth = gl.FragCoord.z;
     outColor = vec4(gl_FragCoord.z, planeApprox(gl_FragCoord.z),0.0,1.0);
-    //outColor = vec4(1.0, 0.0, 1.0, 1.0);
+    //gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }`

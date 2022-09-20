@@ -1,7 +1,7 @@
 function shadowShaderSetup(lightPosition,scale = 1,w,h,c){
     let scaledPosition = glMatrix.vec3.scale(glMatrix.vec3.create(),lightPosition,-scale)
-    let ortoProjMatrix = glMatrix.mat4.ortho(glMatrix.mat4.create(),-w/8,w/8,-h/8,h/8,-300,300)
-    let viewMatrixLight = glMatrix.mat4.lookAt(glMatrix.mat4.create(),scaledPosition,[0,0,0],[0,1,0])
+    let ortoProjMatrix = glMatrix.mat4.ortho([],-w,w,-h,h,-150,150)
+    let viewMatrixLight = glMatrix.mat4.lookAt(glMatrix.mat4.create(),scaledPosition,[0,0,0],[0,1,-1])
     let lightCoordsMatrix = glMatrix.mat4.multiply(glMatrix.mat4.create(),ortoProjMatrix,viewMatrixLight)
    let sShader = c.spawnShader(shadow_vs,shadow_fs,"shadowShader")
     sShader.setEnableAttrFunc((shader) =>{

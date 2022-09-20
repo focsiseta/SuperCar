@@ -110,13 +110,16 @@ function indicesOrder(vertices) {
     for (let i = 0; i < NoOfTriangles / 2; i++) {
         /* /2 perche' devo pensare solo a come avanzare tra i due set base di indici e non come passare
         * da uno all'altro */
-        indices.push(2 * i)
-        indices.push(2 + 2 * i)
-        indices.push(1 + 2 * i)
+        console.log(2 * i, 2 + 2 * i, 1 + 2 * i)
 
-        indices.push(2 + 2 * i)
-        indices.push(3 + 2 * i)
         indices.push(1 + 2 * i)
+        indices.push(2 + 2 * i)
+        indices.push(2 * i)
+
+        indices.push(1 + 2 * i)
+        indices.push(3 + 2 * i)
+        indices.push(2 + 2 * i)
+
     }
     return indices
 }

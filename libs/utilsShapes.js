@@ -190,18 +190,22 @@ function divideIntoPoints2D(coordinateArray){
     }
     return points
 }
-function attemptToFixUVs(coordArray){
-    var fixedUVs = []
-    coordArray.forEach((value)  =>{
-        if (value != 1 || value != 0){
-            var tmp = Math.floor(value)
-            fixedUVs.push(value - tmp)
-            console.log(value - tmp)
-        }else{
-            fixedUVs.push(value)
-        }
-
+function flatVertices(vertices){
+    let flat = []
+    vertices.forEach((point) =>{
+        //console.log("Points",point)
+        point.forEach((coord) => {
+            flat.push(coord)
+        })
     })
-
-    return fixedUVs
+    return new Float32Array(flat)
+}
+function rotatePoints(transformation,vertices){
+    let verticesVectors = divideIntoPoints3D(vertices)
+    let vVectors = []
+    verticesVectors.forEach((vector) =>{
+        let v = glMatrix.vec3.transformMat3([],vector,transformation)
+        vVectors.push(v)
+    })
+    return flatVertices(vVectors)
 }
