@@ -61,7 +61,7 @@ class Shader {
         let uniforms = []
         let linesVS = vsCode.split("\n")
         linesVS.forEach((line) =>{
-            if(line.includes("attribute") && !line.includes("//")){
+            if((line.includes("attribute ") || line.includes("in ")) && !line.includes("//")){
                 let subLines = line.split(" ")
                 subLines.forEach((sub) =>{
                     if(sub.includes(";")){
@@ -70,7 +70,7 @@ class Shader {
                     }
                 })
             }
-            if(line.includes("uniform") && !line.includes("//")){
+            if(line.includes("uniform ") && !line.includes("//")){
                 let subLines = line.split(" ")
                 subLines.forEach((sub) =>{
                     if(sub.includes(";")){
@@ -270,6 +270,9 @@ class Shader {
 
     setVectorUniform(uniformName, data){
         this.gl.uniform3fv(this[uniformName],data)
+    }
+    setVector4Uniform(uniformName, data){
+        this.gl.uniform4fv(this[uniformName],data)
     }
     getUniformValue(uniformName){
         return this.gl.getUniform(this.program,this[uniformName])

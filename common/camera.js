@@ -138,12 +138,17 @@ class ChaseCamera{
                 this.refDrawable.translate(front)
                 this.refDrawable.update()
             }
+            if(handler.getKeyStatus("s")){
+                glMatrix.vec3.scale(front,front,-speed)
+                this.refDrawable.translate(front)
+                this.refDrawable.update()
+            }
             if(handler.getKeyStatus("d")){
-                this.refDrawable.wRotateY(gradToRad(1))
+                this.refDrawable.wRotateY(gradToRad(1 * speed))
                 this.refDrawable.update()
             }
             if(handler.getKeyStatus("a")){
-                this.refDrawable.wRotateY(gradToRad(-1))
+                this.refDrawable.wRotateY(gradToRad(-1 * speed))
                 this.refDrawable.update()
             }
         }
@@ -199,8 +204,9 @@ class QuadCamera {
 
      */
     getPosition(){
-        let viewMatrix = glMatrix.mat4.invert([],this.viewMatrix)
-        return [viewMatrix[12],viewMatrix[13],viewMatrix[14]]
+        //let viewMatrix = glMatrix.mat4.invert([],this.viewMatrix)
+
+        return this.position
     }
     getViewMatrix() {
         let center = [

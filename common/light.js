@@ -39,7 +39,7 @@ class DirectionalLight extends Transformations{
             vec3 N = normalize(normal);
             vec3 lightDir = normalize(-light.dir);
             vec3 viewDirection = normalize(cameraPos - fragPos);
-            vec4 ambient = vec4(color.rgb * light.ambInt,1.0);
+            vec4 ambient = color * light.ambInt;
             
             
             float diff = max(dot(N,lightDir),0.4);
@@ -48,10 +48,10 @@ class DirectionalLight extends Transformations{
             vec3 halfway = normalize(lightDir + viewDirection);
             float spec = pow(max(dot(halfway,N),0.0),64.0);
                 
-            vec4 specular = spec * vec4(light.color,1.0) * diffuse;
+            vec4 specular = spec * vec4(light.color,1.0);
                 
             vec4 finalColor = specular + diffuse + ambient;
-            return finalColor;
+            return vec4(finalColor.rgb,1.0);
         }
     `}
         return ""

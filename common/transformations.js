@@ -39,7 +39,7 @@ class Transformations {
         //todo
         //Still does some unwanted math, but I have other stuff to write rn
         if(this.dirty){
-            console.log("Doing math...")
+            //console.log("Doing math...")
             this.dirty = false
             this.transformationMatrix = glMatrix.mat4.mul(this.transformationMatrix,this.translationMatrix,this.scaleMatrix)
             //(T * S) = T * S * R

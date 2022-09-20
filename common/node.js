@@ -18,6 +18,28 @@ class Node {
         Node.counter++
 
     }
+    calc(){
+        Node.recCalc(this,glMatrix.mat4.create(),this.drawable.getDirty())
+    }
+    static recCalc(node,acc,dirty){
+        node.drawable.update()
+        acc = node.drawable.getFrame()
+        node.leafs.forEach((leafNode) =>{
+            let wasDirty = leafNode.drawable.getDirty()
+            leafNode.drawable.update()
+            leafNode.drawable.setFatherFrame(acc)
+            Node.recCalc(leafNode,acc,wasDirty)
+        })
+    }
+    drawFromNode(){
+        Node.recDraw(this)
+    }
+    static recDraw(node){
+        node.shader.draw(node.drawable)
+        node.leafs.forEach((leaf) =>{
+            Node.recDraw(leaf)
+        })
+    }
 
     DrawableAsLeaf(drawable){
         if(drawable == null){
@@ -57,6 +79,7 @@ class Node {
         })
         return acc
     }
+    /*
     transformationCalc(){
         if(this.drawable != null){
             Node.recTransformCalc(this,this.drawable.frame,this.drawable.getDirty())
@@ -77,4 +100,6 @@ class Node {
         })
 
     }
+     */
+
 }

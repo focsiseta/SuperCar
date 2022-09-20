@@ -12,7 +12,7 @@ class Texture {
                 this.textureBuffer = gl.createTexture();
                 //gl.activeTexture(gl.TEXTURE0 + this.textureUnit);
                 gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
                 if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
                     // Yes, it's a power of 2. Generate mips.
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);

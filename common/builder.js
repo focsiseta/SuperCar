@@ -9,7 +9,9 @@ class ShaderSource{
         `#include(spotlight)`,
         `#include(structpl)`,
         `#include(structdl)`,
-        `#include(dirShadow)`
+        `#include(dirShadow)`,
+        `#include(parallax)`,
+        `#include(lightcalcs)`
     ]
 
     constructor(source = null) {
@@ -30,6 +32,12 @@ class ShaderSource{
             }
             if(this.source.includes(ShaderSource.libList[6])){
                 this.source = this.source.replace(ShaderSource.libList[6],shIncludes[ShaderSource.libList[6]])
+            }
+            if(this.source.includes(ShaderSource.libList[7])){
+                this.source = this.source.replace(ShaderSource.libList[7],parIncludes[ShaderSource.libList[7]])
+            }
+            if(this.source.includes(ShaderSource.libList[8])){
+                this.source = this.source.replace(ShaderSource.libList[8],lightCalcs[ShaderSource.libList[8]])
             }
         }
     }

@@ -50,7 +50,7 @@ class Framebuffers{
         this.gl = gl
     }
 
-    static renderTarget(h,w,gl) {
+    static renderTarget(gl,w,h) {
         let fbo = new Framebuffers(gl)
         //this.framebuffer = gl.createFramebuffer()
         //this.texture = gl.createTexture()
@@ -68,6 +68,7 @@ class Framebuffers{
         gl.bindFramebuffer(gl.FRAMEBUFFER,null)
         gl.bindTexture(gl.TEXTURE_2D,null)
         gl.bindRenderbuffer(gl.RENDERBUFFER,null)
+        return fbo
     }
 
     static shadowMap(gl,w,h){
@@ -80,8 +81,8 @@ class Framebuffers{
 
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST)
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT)
-        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT)
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE)
 
         gl.bindFramebuffer(gl.FRAMEBUFFER,fbo.framebuffer)
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, fbo.textureBuffer, 0);
