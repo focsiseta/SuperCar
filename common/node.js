@@ -40,6 +40,15 @@ class Node {
             Node.recDraw(leaf)
         })
     }
+    drawFromNodeDifferentShader(shader){
+        Node.recDrawDiffShader(shader,this)
+    }
+    static recDrawDiffShader(shader,node){
+        shader.draw(node.drawable)
+        node.leafs.forEach((leaf) => {
+            Node.recDrawDiffShader(shader,leaf)
+        })
+    }
 
     DrawableAsLeaf(drawable){
         if(drawable == null){

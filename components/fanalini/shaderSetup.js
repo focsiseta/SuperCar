@@ -1,5 +1,5 @@
 function fanaliniMatrix(from,refDrawanble,target){
-    let perspectiveMatrix = glMatrix.mat4.perspective([],gradToRad(20),130/72, 0.01,10)
+    let perspectiveMatrix = glMatrix.mat4.perspective([],gradToRad(20),130/72, 0.01,30)
     let camera = new ChaseCamera(from,target,refDrawanble)
     camera.perspectiveMatrix = perspectiveMatrix
     return camera

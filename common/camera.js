@@ -104,8 +104,13 @@ class ChaseCamera{
         this.position = position
         this.up = [0,1,0]
         this.toChase = toChase
+        this.front = glMatrix.vec3.sub([],this.toChase,this.position)
+        glMatrix.vec3.normalize(this.front,this.front)
+        this.right = glMatrix.vec3.cross([],this.front,this.up)
+        glMatrix.vec3.normalize(this.right,this.right)
         this.refDrawable = referenceDrawable
         this.viewMatrix = glMatrix.mat4.create()
+        this.mouseRotation = glMatrix.mat4.create()
         if(this.refDrawable === null){
             this.refSpace = glMatrix.mat4.create()
 
@@ -128,6 +133,59 @@ class ChaseCamera{
     getPosition(){
         let viewMatrix = glMatrix.mat4.invert([],this.viewMatrix)
         return [viewMatrix[12],viewMatrix[13],viewMatrix[14]]
+    }
+
+    processMouseAndKeyboard(handler){
+
+        if(handler.drag){
+            glMatrix.vec3.sub(this.front,this.toChase,this.position)
+            glMatrix.vec3.cross(this.right,this.front,this.up)
+            glMatrix.vec3.normalize(this.right,this.right)
+            let quatYaw = glMatrix.quat.setAxisAngle([],this.up,gradToRad(handler.yaw))
+            let matrixYaw = glMatrix.mat4.fromQuat([],quatYaw)
+            let quatPitch = glMatrix.quat.setAxisAngle([],this.right,gradToRad(handler.pitch))
+            let matrixPitch = glMatrix.mat4.fromQuat([],quatPitch)
+            glMatrix.vec3.transformMat4(this.toChase,this.toChase,matrixPitch)
+            glMatrix.vec3.transformMat4(this.front,this.toChase,matrixYaw)
+            this.toChase = this.front
+            console.log(handler.yaw,handler.pitch)
+        }
+        if(handler.getKeyStatus("a") || handler.getKeyStatus("A")){
+            let rotQuat = glMatrix.quat.setAxisAngle([],[0,1,0],gradToRad(1))
+            let rotMatrix = glMatrix.mat4.fromQuat([],rotQuat)
+            glMatrix.vec3.transformMat4(this.position,this.position,rotMatrix)
+        }
+        if(handler.getKeyStatus("d") || handler.getKeyStatus("D")){
+            let rotQuat = glMatrix.quat.setAxisAngle([],[0,1,0],gradToRad(-1))
+            let rotMatrix = glMatrix.mat4.fromQuat([],rotQuat)
+            glMatrix.vec3.transformMat4(this.position,this.position,rotMatrix)
+        }
+        /*
+        //glMatrix.vec3.rotateX(this.toChase,this.toChase,[0,0,0],gradToRad(handler.pitch))
+        glMatrix.vec3.sub(this.front,this.toChase,this.position)
+        glMatrix.vec3.normalize(this.front,this.front)
+        glMatrix.vec3.normalize(this.up,this.up)
+        glMatrix.vec3.normalize(this.right,this.right)
+        if(handler.drag) {
+            let right = glMatrix.vec3.cross([],this.front,this.up)
+            let rotYaw = glMatrix.quat.setAxisAngle([], this.up, gradToRad(handler.yaw))
+            glMatrix.quat.normalize(rotYaw,rotYaw)
+            let rotPitch = glMatrix.quat.setAxisAngle([], right, gradToRad(handler.pitch))
+            glMatrix.quat.normalize(rotPitch,rotPitch)
+
+            let yawMatrix = glMatrix.mat4.fromQuat([], rotYaw)
+            let pitchMatrix = glMatrix.mat4.fromQuat([], rotPitch)
+            //this.mouseRotation = glMatrix.mat4.fromRotation()
+            //this.toChase = glMatrix.vec3.transformMat4(this.toChase,this.toChase,pitchMatrix)
+            //this.mouseRotation = glMatrix.mat4.mul(this.mouseRotation, yawMatrix, pitchMatrix)
+            //this.mouseRotation = glMatrix.mat4.mul(this.mouseRotation,yawMatrix,this.mouseRotation)
+            this.toChase = glMatrix.vec3.transformMat4(this.toChase, this.toChase, rotPitch)
+        }//glMatrix.vec3.cross(this.right,this.toChase,this.up)
+
+         */
+
+
+
     }
     moveDrawable(handler,speed){
         if(this.refDrawable !== null){
@@ -281,4 +339,6 @@ class QuadCamera {
 
     }
 }
+
+
 

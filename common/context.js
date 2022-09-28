@@ -2,6 +2,7 @@ class Context {
     constructor(canvasID = "OUT",typeOfContext = "webgl2") {
         var canvas = document.getElementById(canvasID)
         this.gl = WebGLDebugUtils.makeDebugContext(canvas.getContext(typeOfContext))
+        this.gl.canvas = canvas
         //this.gl = canvas.getContext(typeOfContext)
         //this.gl.getExtension('OES_standard_derivatives')
         /*

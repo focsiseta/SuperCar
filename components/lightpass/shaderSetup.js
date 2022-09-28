@@ -1,5 +1,4 @@
 function lightpassSetup(c){
-    handler = new Input()
     dir = new DirectionalLight(0.1,[1,1,1],[-1,-1,0])
     var point = new Pointlight(0.2,[1,1,1],[0,5,0],0.22,0.0019)
     var source = new ShaderSource(lightpass_fs)
