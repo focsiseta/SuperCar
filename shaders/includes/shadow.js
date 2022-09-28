@@ -52,7 +52,7 @@ var lightCalcs = {
         }
         
         vec4 diffuseComponent(vec3 lightDir,vec3 normal,vec4 diffuseColor){
-            float diffuse = max(dot(normal,lightDir),0.2);
+            float diffuse = max(dot(normal,lightDir),0.0);
             return vec4((diffuse * diffuseColor).rgb,1.0);
         }
         

@@ -66,7 +66,11 @@ const lightpass_fs = `
     varying vec4 vFanalinoFragPosDX;
     varying vec4 vLightFragPos;
     uniform vec3 uView;
+    uniform float isOnDX;
+    uniform float isOnSX;
     uniform float hasTexture;
+    uniform float isBuilding;
+    uniform float uBias;
     uniform vec4 uColor;
     uniform sampler2D uAlbedo;
     uniform sampler2D uNormal;
@@ -89,10 +93,18 @@ const lightpass_fs = `
         vec4 outColor;
         vec3 lightDir = normalize(-dirLights[0].dir);
         vec3 viewDir = normalize(uView - vPos);
+        vec3 sx = vFanalinoFragPosSX.xyz / vFanalinoFragPosSX.w;
+        vec3 dx = vFanalinoFragPosDX.xyz / vFanalinoFragPosDX.w;
+        vec2 texCoordsDX = ((dx.xy) * 0.5) + 0.5;
+        vec2 texCoordsSX = ((sx.xy) * 0.5) + 0.5;
+        
+        float isLitSX = shadowSampling(vFanalinoFragPosSX,uDepthSX,0.0005);
+        float isLitDX = shadowSampling(vFanalinoFragPosDX,uDepthDX,0.0005);
         if(hasTexture == 0.0){
         
-            float bias = max(0.01 * (1.0 - dot(normalize(vNormal), normalize(-dirLights[0].dir))), 0.001);
-            float isShadow = shadowSampling(vLightFragPos,uShadow,bias);
+            float bias = max(0.01 * (1.0 - dot(normalize(vNormal), normalize(-dirLights[0].dir))), 0.0005);
+            float isShadow = shadowSampling(vLightFragPos,uShadow,0.001);
+            
             vec4 ambient = ambientComponent(uColor,dirLights[0].ambInt);
             vec4 diffuse = diffuseComponent(lightDir,normalize(vNormal),uColor);
             vec4 specular = specularComponent(viewDir,lightDir,vNormal,vec4(dirLights[0].color,1.0),1.0);
@@ -104,7 +116,7 @@ const lightpass_fs = `
             vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
             vec3 finalNormal = sampledNormal + vNormal;
             float bias = max(0.01 * (1.0 - dot(finalNormal, normalize(-dirLights[0].dir))), 0.001);
-            float isShadow = shadowSampling(vLightFragPos,uShadow,0.001);
+            float isShadow = shadowSampling(vLightFragPos,uShadow,0.0005);
             vec4 ambient = ambientComponent(color,dirLights[0].ambInt);
             vec4 specular = specularComponent(viewDir,lightDir,normalize(finalNormal),vec4(dirLights[0].color,1.0),10.0);
             vec4 diffuse = diffuseComponent(lightDir,finalNormal,color);
@@ -115,12 +127,8 @@ const lightpass_fs = `
             //gl_FragColor = lightPass(dirLights[0],color,finalNormal,uView, vPos,isShadow);
             //gl_FragColor = vec4(finalNormal,1.0);
         }
-        vec3 sx = vFanalinoFragPosSX.xyz / vFanalinoFragPosSX.w;
-        vec3 dx = vFanalinoFragPosDX.xyz / vFanalinoFragPosDX.w;
-        vec2 texCoordsDX = ((dx.xy) + 0.5) * 0.5;
-        vec2 texCoordsSX = ((sx.xy) + 0.5) * 0.5;
-        float depthSamplingSX = texture2D(uDepthSX,texCoordsSX).r;
-        float isLit = shadowSampling(vFanalinoFragPosSX,uDepthSX,0.0005);
+       
+
            
       //  /*
       //  if(vFanalinoFragPos.w >= 0.0 && vFanalinoFragPos.z <= 20.0 && fColor.a > 0.0){
@@ -129,12 +137,13 @@ const lightpass_fs = `
       //  */
       vec4 fColorSX = texture2D(uFanalino,texCoordsSX);
       vec4 fColorDX = texture2D(uFanalino,texCoordsDX);
-        if(inRange(texCoordsSX) && (vFanalinoFragPosSX.w >= 0.0 && fColorSX.a > 0.0) && isLit == 0.0) {
-            outColor += fColorSX * 0.5;
+        if(inRange(texCoordsSX) && (vFanalinoFragPosSX.w >= 0.0 && fColorSX.a > 0.0) && isLitSX == 0.0 && isOnSX == 1.0) {
+            outColor += fColorSX * 0.2;
         }
-        if(inRange(texCoordsDX) && (vFanalinoFragPosDX.w >= 0.0 && fColorDX.a > 0.0) && false){
-            outColor += fColorDX * 0.5; 
+        if(inRange(texCoordsDX) && (vFanalinoFragPosDX.w >= 0.0 && fColorDX.a > 0.0) && isLitDX == 0.0 && isOnDX == 1.0){
+            outColor += fColorDX * 0.2; 
         }
+
         gl_FragColor = vec4(outColor.rgb,1.0);
     }
 `
