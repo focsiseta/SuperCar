@@ -1,7 +1,7 @@
 # SuperCar
 Project for my Computer Graphics exam.
 This was a really fun project and to be quite honest, with this project I discovered
-a field of CS I fell in love with. I still have so much to learn, I can't wait.
+a field of CS I fell in love with. I still have so much to learn, I can't wait!
 
 Now about the project itself, it's written in native WebGL and pure Javascript.
 The code could be more javascript-y, but for the love of myself I stayed away from all the weird stuff that can be done with JS.
