@@ -33,4 +33,4 @@ Keep pressed M for mouse mode
 
 # Thanks
 
-Thanks to archivetextures.net and humus.net for providing some of the textures I use in this project.
+Thanks to my professor, archivetextures.net and humus.net for providing some of the textures I use in this project.
