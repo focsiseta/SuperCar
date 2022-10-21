@@ -22,7 +22,7 @@ const lightpass_vs = `#version 300 es
     void main(){
         oTex = aTexCoords;
         vPos =  vec3((uM * vec4(aPosition,1.0)).xyz);
-        vNormal = normalize( inverse(transpose(uViewMatrix * uM)) * vec4(aNormal,0.0)).xyz;
+        vNormal = normalize( transpose(inverse(uViewMatrix * uM)) * vec4(aNormal,0.0)).xyz;
         vec3 T = normalize(vec3(uM * vec4(aTangent,0.0)));
         vec3 B = normalize(cross(T,vNormal));
         vTBN = mat3(T,B,vNormal); 
