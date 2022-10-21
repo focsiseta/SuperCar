@@ -1,8 +1,8 @@
-const lightpass_vs = `
-    attribute vec3 aPosition;
-    attribute vec3 aNormal;
-    attribute vec2 aTexCoords;
-    attribute vec3 aTangent;
+const lightpass_vs = `#version 300 es
+    in vec3 aPosition;
+    in vec3 aNormal;
+    in vec2 aTexCoords;
+    in vec3 aTangent;
     
     uniform mat4 uProj;
     uniform mat4 uViewMatrix;
@@ -11,34 +11,18 @@ const lightpass_vs = `
     uniform mat4 cameraProj;
     uniform mat4 fanalinoSX;
     uniform mat4 fanalinoDX;
-    varying vec4 vFanalinoFragPosSX;
-    varying vec4 vFanalinoFragPosDX;
-    varying vec2 oTex;
-    varying vec3 vPos;
-    varying vec3 vNormal;
-    varying vec4 vLightFragPos;
-    varying mat3 vTBN;
-
-
-    
-     mat3 transpose(mat3 inMatrix) {
-        highp vec3 i0 = inMatrix[0];
-        highp vec3 i1 = inMatrix[1];
-        highp vec3 i2 = inMatrix[2];
-
-        highp mat3 outMatrix = mat3(
-                 vec3(i0.x, i1.x, i2.x),
-                 vec3(i0.y, i1.y, i2.y),
-                 vec3(i0.z, i1.z, i2.z)
-                 );
-
-        return outMatrix;
-    }
+    out vec4 vFanalinoFragPosSX;
+    out vec4 vFanalinoFragPosDX;
+    out vec2 oTex;
+    out vec3 vPos;
+    out vec3 vNormal;
+    out vec4 vLightFragPos;
+    out mat3 vTBN;
     
     void main(){
         oTex = aTexCoords;
         vPos =  vec3((uM * vec4(aPosition,1.0)).xyz);
-        vNormal = normalize( uM * vec4(aNormal,0.0)).xyz;
+        vNormal = normalize( inverse(transpose(uViewMatrix * uM)) * vec4(aNormal,0.0)).xyz;
         vec3 T = normalize(vec3(uM * vec4(aTangent,0.0)));
         vec3 B = normalize(cross(T,vNormal));
         vTBN = mat3(T,B,vNormal); 
@@ -51,20 +35,19 @@ const lightpass_vs = `
     }
 
 `
-const lightpass_fs = `
-
+const lightpass_fs = `#version 300 es
     precision highp float;
     #include(dirlight)
     #include(dirShadow)
     #include(lightcalcs)
-    varying vec3 vPos;
-    varying vec3 vNormal;
-    varying vec2 oTex;
-    varying mat3 vTBN;
-    //varying vec4 vFanalinoFragPos;
-    varying vec4 vFanalinoFragPosSX;
-    varying vec4 vFanalinoFragPosDX;
-    varying vec4 vLightFragPos;
+    in vec3 vPos;
+    in vec3 vNormal;
+    in vec2 oTex;
+    in mat3 vTBN;
+    //in vec4 vFanalinoFragPos;
+    in vec4 vFanalinoFragPosSX;
+    in vec4 vFanalinoFragPosDX;
+    in vec4 vLightFragPos;
     uniform vec3 uView;
     uniform float isOnDX;
     uniform float isOnSX;
@@ -78,6 +61,7 @@ const lightpass_fs = `
     uniform sampler2D uFanalino;
     uniform sampler2D uDepthSX;
     uniform sampler2D uDepthDX;
+    out vec4 oColor;
     
     //In this shader we don't work in tangent space
     //infact we remove from tangent space the sampled normal
@@ -112,8 +96,8 @@ const lightpass_fs = `
         
         }else{
         
-            vec4 color = texture2D(uAlbedo,oTex);
-            vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
+            vec4 color = texture(uAlbedo,oTex);
+            vec3 sampledNormal = normalize(vTBN * (texture(uNormal,oTex) * 2.0 - 1.0).xyz);
             vec3 finalNormal = sampledNormal + vNormal;
             float bias = max(0.01 * (1.0 - dot(finalNormal, normalize(-dirLights[0].dir))), 0.001);
             float isShadow = shadowSampling(vLightFragPos,uShadow,0.0005);
@@ -135,15 +119,15 @@ const lightpass_fs = `
       //      gl_FragColor = vec4(fColor.rgb,1.0);
       //  }
       //  */
-      vec4 fColorSX = texture2D(uFanalino,texCoordsSX);
-      vec4 fColorDX = texture2D(uFanalino,texCoordsDX);
+      vec4 fColorSX = texture(uFanalino,texCoordsSX);
+      vec4 fColorDX = texture(uFanalino,texCoordsDX);
         if(inRange(texCoordsSX) && (vFanalinoFragPosSX.w >= 0.0 && fColorSX.a > 0.0) && isLitSX == 0.0 && isOnSX == 1.0) {
             outColor += fColorSX * 0.2;
         }
         if(inRange(texCoordsDX) && (vFanalinoFragPosDX.w >= 0.0 && fColorDX.a > 0.0) && isLitDX == 0.0 && isOnDX == 1.0){
             outColor += fColorDX * 0.2; 
         }
-
-        gl_FragColor = vec4(outColor.rgb,1.0);
+        outColor.rgb = pow( outColor.rgb, vec3(1.0/2.2) );
+        oColor = vec4(outColor.rgb,1.0);
     }
 `
