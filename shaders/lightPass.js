@@ -127,7 +127,9 @@ const lightpass_fs = `#version 300 es
         if(inRange(texCoordsDX) && (vFanalinoFragPosDX.w >= 0.0 && fColorDX.a > 0.0) && isLitDX == 0.0 && isOnDX == 1.0){
             outColor += fColorDX * 0.2; 
         }
+        //Gamma correction
         outColor.rgb = pow( outColor.rgb, vec3(1.0/2.2) );
+        
         oColor = vec4(outColor.rgb,1.0);
     }
 `
