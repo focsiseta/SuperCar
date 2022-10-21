@@ -1,4 +1,3 @@
-//Shadow includes
 var shIncludes = {
     "#include(dirShadow)" : `
          //Frag position light space
@@ -7,7 +6,7 @@ var shIncludes = {
             vec3 projCoords = fragPosLS.xyz / fragPosLS.w;
             //Porto il range da -1~1 a 0~1 per poter fare il sampling
             projCoords = projCoords * 0.5 + 0.5;
-            float closestDepth = texture2D(shadowSamp,projCoords.xy).r;
+            float closestDepth = texture(shadowSamp,projCoords.xy).r;
             float currentDepth = projCoords.z;
             return ((currentDepth - bias) >= closestDepth) ? 1.0 : 0.0;
         }
@@ -16,7 +15,7 @@ var shIncludes = {
             vec3 projCoords = fragPosLS.xyz / fragPosLS.w;
             //Porto il range da -1~1 a 0~1 per poter fare il sampling
             projCoords = projCoords * 0.5 + 0.5;
-            float closestDepth = texture2D(shadowSamp,projCoords.xy).r;
+            float closestDepth = texture(shadowSamp,projCoords.xy).r;
             float currentDepth = projCoords.z;
             return ((currentDepth - bias) < closestDepth) ? 1.0 : 0.0;
         }
